@@ -1,18 +1,19 @@
 ####
-# Exception.pm:  A Perl module defining a package for creating an Exception
-# object, which can be thrown using the Perl "die" function and caught
-# using "eval".
+# Exception.pm:  A Perl module defining a package for creating a
+# Text::BSV::Exception object, which can be thrown using the Perl "die"
+# function and caught using "eval".
 #
 # In addition to the class-name argument, which is passed in automatically
-# when you use the Exception->new() syntax, the constructor takes an
-# exception type (one of the contants defined within the package), a
+# when you use the Text::BSV::Exception->new() syntax, the constructor takes
+# an exception type (one of the contants defined within the package), a
 # message string, and an optional hash reference that points to arbitrary
 # structured data pertaining to the exception.
 #
-# The constructor returns a reference to an Exception object, which is
-# implemented internally as a hash.
+# The constructor returns a reference to a Text::BSV::Exception object,
+# which is implemented internally as a hash.
 #
-# The Exception package provides the following public accessor methods:
+# The Text::BSV::Exception package provides the following public
+# accessor methods:
 #
 #     get_type()
 #     get_message()
@@ -28,7 +29,7 @@
 # This library is free software; you can redistribute it and/or modify it
 # under the same terms as Perl itself.
 ####
-package Exception;
+package Text::BSV::Exception;
 
 use 5.010001;
 use strict;
@@ -41,7 +42,7 @@ use List::Util ("first", "max", "min", "sum");
 use Scalar::Util ("looks_like_number");
 
 # Version:
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # Exception types:
 our $DIRECTORY_NOT_FOUND   = 0;
@@ -122,17 +123,17 @@ __END__
 
 =head1 NAME
 
-Exception - create an object that can be thrown using the Perl "die"
-function (which can accept a reference instead of a string) and caught
+Text::BSV::Exception - create an object that can be thrown using the Perl
+"die" function (which can accept a reference instead of a string) and caught
 using "eval", which stores the object in $EVAL_ERROR ($@).
 
 =head1 SYNOPSIS
 
-  use Exception;
-  my $exception = Exception->new(
-    $Exception::GENERAL, "Couldn't do stuff because of the thing.");
-  my $fancy_exception = Exception->new(
-    $Exception::NULL_POINTER,
+  use Text::BSV::Exception;
+  my $exception = Text::BSV::Exception->new($Text::BSV::Exception::GENERAL,
+    "Couldn't do stuff because of the thing.");
+  my $fancy_exception = Text::BSV::Exception->new(
+    $Text::BSV::Exception::NULL_POINTER,
     "Couldn't do stuff because the thing was pointing to nothing.",
     {"IsFatal" => $TRUE, "Time" => "17:47:18"});
   my $exception_type = $exception->get_type();
@@ -141,16 +142,16 @@ using "eval", which stores the object in $EVAL_ERROR ($@).
 
 =head1 DESCRIPTION
 
-This module defines a package for creating an Exception object, which can be
-thrown using the Perl "die" function and caught using "eval".
+This module defines a package for creating a Text::BSV::Exception object,
+which can be thrown using the Perl "die" function and caught using "eval".
 
 In addition to the class-name argument, which is passed in automatically
-when you use the C<Exception-E<gt>new()> syntax, the constructor takes an
-exception type, a message string, and an optional hash reference that points
-to arbitrary structured data pertaining to the exception.
+when you use the C<Text::BSV::Exception-E<gt>new()> syntax, the constructor
+takes an exception type, a message string, and an optional hash reference
+that points to arbitrary structured data pertaining to the exception.
 
 The exception type must be one of the following constants defined in the
-Exception package:
+Text::BSV::Exception package:
 
     $DIRECTORY_NOT_FOUND
     $FILE_NOT_FOUND
@@ -163,9 +164,9 @@ Exception package:
     $NULL_POINTER
     $UNSUPPORTED_OPERATION
 
-The constructor returns a reference to an Exception object, which is
-implemented internally as a hash.  All functionality is exposed through
-methods.
+The constructor returns a reference to a Text::BSV::Exception object,
+which is implemented internally as a hash.  All functionality is exposed
+through methods.
 
 =head1 PREREQUISITES
 
@@ -175,14 +176,16 @@ This module requires Perl 5, version 5.10.1 or later.
 
 =over
 
-=item Exception->new($exception_type, $message, $optional_hash_ref);
+=item Text::BSV::Exception->new($exception_type, $message,
+  $optional_hash_ref);
 
 This is the constructor.
 
 =item $exception->get_type();
 
 This is the accessor method for retrieving the exception type, which
-must be one of the following constants defined in the Exception package:
+must be one of the following constants defined in the
+Text::BSV::Exception package:
 
     $DIRECTORY_NOT_FOUND
     $FILE_NOT_FOUND

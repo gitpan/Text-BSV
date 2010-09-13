@@ -11,10 +11,10 @@ use Test::More ("tests" => 46);
 use English "-no_match_vars";
 use File::Compare ("compare_text");
 
-use Exception;
 use Text::BSV::BsvFileReader;
 use Text::BSV::BsvListReader;
 use Text::BSV::BsvWriter;
+use Text::BSV::Exception;
 
 # Constants:
 my $POUND     = "#";
@@ -44,18 +44,18 @@ for my $file_path (
 
     given ($file_path) {
         when ("nonexistent_file.bsv") {
-            ok($EVAL_ERROR
-              && $EVAL_ERROR->get_type() == $Exception::FILE_NOT_FOUND,
+            ok($EVAL_ERROR && $EVAL_ERROR->get_type()
+              == $Text::BSV::Exception::FILE_NOT_FOUND,
               "Attempting to read a nonexistent BSV file generates an "
-              . "exception of type \$Exception::FILE_NOT_FOUND");
+              . "exception of type \$Text::BSV::Exception::FILE_NOT_FOUND");
         }
         when (/\A(?:(?:ambiguous|wombats)\.csv|no_records\.bsv)\z/s) {
-            ok($EVAL_ERROR
-              && $EVAL_ERROR->get_type() == $Exception::INVALID_DATA_FORMAT,
+            ok($EVAL_ERROR && $EVAL_ERROR->get_type()
+              == $Text::BSV::Exception::INVALID_DATA_FORMAT,
               "Constructing a BSV file reader from a file that contains "
               . "invalid BSV data in the header row or the first "
               . "non-header row generates an exception of type "
-              . "\$Exception::INVALID_DATA_FORMAT");
+              . "\$Text::BSV::Exception::INVALID_DATA_FORMAT");
         }
         when ("bad_backslash.bsv") {
             my $field_names = $bsv_file_reader->get_field_names();
@@ -90,10 +90,11 @@ for my $file_path (
                 $bsv_file_reader->get_record();
             };
 
-            ok($EVAL_ERROR
-              && $EVAL_ERROR->get_type() == $Exception::INVALID_DATA_FORMAT,
+            ok($EVAL_ERROR && $EVAL_ERROR->get_type()
+              == $Text::BSV::Exception::INVALID_DATA_FORMAT,
               "The second record in ${DQ}bad_backslash.bsv${DQ} generates "
-              . "an exception of type \$Exception::INVALID_DATA_FORMAT");
+              . "an exception of type "
+              . "\$Text::BSV::Exception::INVALID_DATA_FORMAT");
         }
         when ("wombats.bsv") {
             my $field_names;
@@ -214,19 +215,19 @@ for my $file_path (
 
     given ($file_path) {
         when (/\A(?:(?:ambiguous|wombats)\.csv|no_records\.bsv)\z/s) {
-            ok($EVAL_ERROR
-              && $EVAL_ERROR->get_type() == $Exception::INVALID_DATA_FORMAT,
+            ok($EVAL_ERROR && $EVAL_ERROR->get_type()
+              == $Text::BSV::Exception::INVALID_DATA_FORMAT,
               "Constructing a BSV list reader from lines that contain "
               . "invalid BSV data in the header row or the first "
               . "non-header row generates an exception of type "
-              . "\$Exception::INVALID_DATA_FORMAT");
+              . "\$Text::BSV::Exception::INVALID_DATA_FORMAT");
         }
         when ("bad_backslash.bsv") {
-            ok($EVAL_ERROR
-              && $EVAL_ERROR->get_type() == $Exception::INVALID_DATA_FORMAT,
+            ok($EVAL_ERROR && $EVAL_ERROR->get_type()
+              == $Text::BSV::Exception::INVALID_DATA_FORMAT,
               "Constructing a BSV list reader from BSV lines that contain "
               . "invalid backslash usage generates an exception of type "
-              . "\$Exception::INVALID_DATA_FORMAT");
+              . "\$Text::BSV::Exception::INVALID_DATA_FORMAT");
         }
         when ("wombats.bsv") {
             my $field_names;

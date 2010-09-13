@@ -25,10 +25,10 @@ use List::Util ("first", "max", "min", "sum");
 use Scalar::Util ("looks_like_number");
 use Exporter;
 
-use Exception;
+use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # Specify default exports:
 our @ISA = ("Exporter");
@@ -63,7 +63,7 @@ my $INCLUDE_TRAILING_EMPTY_FIELDS = -1;
 # returns a string containing the field delimiter.
 #
 # If the field delimiter cannot be unambiguously determined, the function
-# throws an exception of type $Exception::INVALID_DATA_FORMAT.
+# throws an exception of type $Text::BSV::Exception::INVALID_DATA_FORMAT.
 sub get_field_delimiter {
     my $header_row = $_[0];
     my $first_nonheader_row = $_[1];
@@ -74,7 +74,8 @@ sub get_field_delimiter {
     }
     elsif (index($header_row, $DQ) > -1
       || index($first_nonheader_row, $DQ) > -1) {
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "There is no vertical bar in the header row, but there is a "
           . "double quotation mark in the header row or in the first "
           . "non-header row.");
@@ -90,7 +91,8 @@ sub get_field_delimiter {
 
         given (scalar @potential_delimiters) {
             when (0) {
-                die Exception->new($Exception::INVALID_DATA_FORMAT,
+                die Text::BSV::Exception->new(
+                  $Text::BSV::Exception::INVALID_DATA_FORMAT,
                   "The field delimiter in the BSV data cannot be "
                   . "unambiguously determined.");
             }
@@ -105,8 +107,8 @@ sub get_field_delimiter {
                       == num_delimiters(
                       $first_nonheader_row, $potential_delimiter)) {
                         if ($found_winner) {
-                            die Exception->new(
-                              $Exception::INVALID_DATA_FORMAT,
+                            die Text::BSV::Exception->new(
+                              $Text::BSV::Exception::INVALID_DATA_FORMAT,
                               "The field delimiter in the BSV data "
                               . "cannot be unambiguously determined.");
                         }
@@ -118,7 +120,8 @@ sub get_field_delimiter {
                 } # next $potential_delimiter
 
                 unless ($found_winner) {
-                    die Exception->new($Exception::INVALID_DATA_FORMAT,
+                    die Text::BSV::Exception->new(
+                      $Text::BSV::Exception::INVALID_DATA_FORMAT,
                       "The field delimiter in the BSV data cannot be "
                           . "unambiguously determined.");
                 } # end unless
@@ -139,17 +142,19 @@ sub get_field_delimiter {
 #
 # If the header row contains any newline or carriage-return characters or
 # the specified field delimiter is not supported by the BSV format, the
-# function throws an exception of type $Exception::ILLEGAL_ARGUMENT.  If
-# the field names are not unique, or if the header row contains a double
-# quotation mark but the field delimiter is not the vertical bar, the
-# function throws an exception of type $Exception::INVALID_DATA_FORMAT.
+# function throws an exception of type
+# $Text::BSV::Exception::ILLEGAL_ARGUMENT.  If the field names are not
+# unique, or if the header row contains a double quotation mark but the
+# field delimiter is not the vertical bar, the function throws an exception
+# of type $Text::BSV::Exception::INVALID_DATA_FORMAT.
 sub parse_header_row {
     my $header_row = $_[0];
     my $field_delimiter = $_[1];
     my @field_names;
 
     if ($header_row =~ /[\r\n]/s) {
-        die Exception->new($Exception::ILLEGAL_ARGUMENT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::ILLEGAL_ARGUMENT,
           "The header row passed to the parse_header_row() function "
           . "contains newline or carriage-return characters.");
     } # end if
@@ -169,7 +174,8 @@ sub parse_header_row {
             $field_name = translate_from_bsv($field_name);
 
             if ($field_name ~~ @field_names) {
-                die Exception->new($Exception::INVALID_DATA_FORMAT,
+                die Text::BSV::Exception->new(
+                  $Text::BSV::Exception::INVALID_DATA_FORMAT,
                   "Duplicate field names.");
             } # end if
 
@@ -177,7 +183,8 @@ sub parse_header_row {
         } # next $piece
     }
     elsif (index($header_row, $DQ) > -1) {
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "The field delimiter in the BSV data is not the vertical bar, "
           . "but there is a double quotation mark in the header row.");
     }
@@ -189,7 +196,8 @@ sub parse_header_row {
 
         for my $piece (@pieces) {
             if ($piece ~~ @field_names) {
-                die Exception->new($Exception::INVALID_DATA_FORMAT,
+                die Text::BSV::Exception->new(
+                  $Text::BSV::Exception::INVALID_DATA_FORMAT,
                   "Duplicate field names.");
             } # end if
 
@@ -197,7 +205,8 @@ sub parse_header_row {
         } # next $piece
     }
     else {
-        die Exception->new($Exception::ILLEGAL_ARGUMENT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::ILLEGAL_ARGUMENT,
           "The field delimiter passed to the parse_header_row() function "
           . "is not supported by the BSV format.");
     } # end if
@@ -219,11 +228,12 @@ sub parse_header_row {
 #
 # If the row contains any newline or carriage-return characters or the
 # specified field delimiter is not supported by the BSV format, the
-# function throws an exception of type $Exception::ILLEGAL_ARGUMENT.  If
-# the row does not contain the number of fields matching the number of
-# field names passed in, or if the row contains a double quotation mark but
-# the field delimiter is not the vertical bar, the function throws an
-# exception of type $Exception::INVALID_DATA_FORMAT.
+# function throws an exception of type
+# $Text::BSV::Exception::ILLEGAL_ARGUMENT.  If the row does not contain the
+# number of fields matching the number of field names passed in, or if the
+# row contains a double quotation mark but the field delimiter is not the
+# vertical bar, the function throws an exception of type
+# $Text::BSV::Exception::INVALID_DATA_FORMAT.
 sub parse_row {
     my $row = $_[0];
     my $field_delimiter = $_[1];
@@ -231,7 +241,8 @@ sub parse_row {
     my $record = {};
 
     if ($row =~ /[\r\n]/s) {
-        die Exception->new($Exception::ILLEGAL_ARGUMENT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::ILLEGAL_ARGUMENT,
           "The row passed to the parse_row() function contains "
           . "newline or carriage-return characters.");
     } # end if
@@ -245,7 +256,8 @@ sub parse_row {
           $INCLUDE_TRAILING_EMPTY_FIELDS;
 
         unless (scalar(@pieces) == scalar(@{ $field_names })) {
-            die Exception->new($Exception::INVALID_DATA_FORMAT,
+            die Text::BSV::Exception->new(
+              $Text::BSV::Exception::INVALID_DATA_FORMAT,
               "The number of fields in a row passed to the "
               . "parse_row() function does not match the number of "
               . "field names passed in.");
@@ -260,7 +272,8 @@ sub parse_row {
         } # next $piece
     }
     elsif (index($row, $DQ) > -1) {
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "The field delimiter in the BSV data is not the vertical bar, "
           . "but there is a double quotation mark in at least one "
           . "of the rows.");
@@ -272,7 +285,8 @@ sub parse_row {
           $INCLUDE_TRAILING_EMPTY_FIELDS;
 
         unless (scalar(@pieces) == scalar(@{ $field_names })) {
-            die Exception->new($Exception::INVALID_DATA_FORMAT,
+            die Text::BSV::Exception->new(
+              $Text::BSV::Exception::INVALID_DATA_FORMAT,
               "The number of fields in a row passed to the "
               . "parse_row() function does not match the number of "
               . "field names passed in.");
@@ -283,7 +297,8 @@ sub parse_row {
         } # next $dex
     }
     else {
-        die Exception->new($Exception::ILLEGAL_ARGUMENT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::ILLEGAL_ARGUMENT,
           "The field delimiter passed to the parse_row() function "
           . "is not supported by the BSV format.");
     } # end if
@@ -296,7 +311,7 @@ sub parse_row {
 # header row (with no end-of-line characters added).
 #
 # If the field names passed in are not unique, the function throws an
-# exception of type $Exception::ILLEGAL_ARGUMENT.
+# exception of type $Text::BSV::Exception::ILLEGAL_ARGUMENT.
 sub generate_header_row {
     my $field_names = $_[0];
     my @validated_field_names = ();
@@ -304,7 +319,8 @@ sub generate_header_row {
 
     for my $dex (0..$#{ $field_names }) {
         if ($field_names->[$dex] ~~ @validated_field_names) {
-            die Exception->new($Exception::ILLEGAL_ARGUMENT,
+            die Text::BSV::Exception->new(
+              $Text::BSV::Exception::ILLEGAL_ARGUMENT,
               "Field names are not unique.");
         } # end if
 
@@ -328,21 +344,23 @@ sub generate_header_row {
 #
 # If the number and names of the fields in the passed-in hash do not match
 # the passed-in array of field names, the function throws an exception of
-# type $Exception::ILLEGAL_ARGUMENT.
+# type $Text::BSV::Exception::ILLEGAL_ARGUMENT.
 sub generate_row {
     my $record = $_[0];
     my $field_names = $_[1];
     my $row = $EMPTY;
 
     unless (scalar(keys %{ $record }) == scalar(@{ $field_names })) {
-        die Exception->new($Exception::ILLEGAL_ARGUMENT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::ILLEGAL_ARGUMENT,
           "The number of field names passed to the generate_row() function "
           . "does not match the number field values in the record.");
     } # end unless
 
     for my $dex (0..$#{ $field_names }) {
         unless (exists $record->{$field_names->[$dex]}) {
-            die Exception->new($Exception::ILLEGAL_ARGUMENT,
+            die Text::BSV::Exception->new(
+              $Text::BSV::Exception::ILLEGAL_ARGUMENT,
               "The record passed to the generate_row() function does not "
               . "match the list of field names passed in.");
         } # end unless
@@ -385,15 +403,16 @@ sub num_delimiters {
 #
 # If the field name or value contains any instances of invalid backslash
 # usage, the function throws an exception of type
-# $Exception::INVALID_DATA_FORMAT.  If the field name or value contains any
-# newline or carriage-return characters, the function throws an exception
-# of type $Exception::ILLEGAL_ARGUMENT.
+# $Text::BSV::Exception::INVALID_DATA_FORMAT.  If the field name or value
+# contains any newline or carriage-return characters, the function throws an
+# exception of type $Text::BSV::Exception::ILLEGAL_ARGUMENT.
 sub translate_from_bsv {
     my $bsv_str = $_[0];
     my $normal_str = $bsv_str;
 
     if ($bsv_str =~ /[\r\n]/s) {
-        die Exception->new($Exception::ILLEGAL_ARGUMENT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::ILLEGAL_ARGUMENT,
           "A BSV field name or value cannot contain newline or "
           . "carriage-return characters.");
     } # end if
@@ -401,7 +420,8 @@ sub translate_from_bsv {
     $normal_str =~ s/\\\\/\n/gs;
 
     if ($normal_str =~ /\\[^|n]/s) {
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "Invalid backslash usage in BSV data.");
     } # end if
 

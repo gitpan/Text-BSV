@@ -1,4 +1,4 @@
-Text::BSV::* version 1.01
+Text::BSV::* version 1.02
 
 DESCRIPTION
 
@@ -25,31 +25,22 @@ DESCRIPTION
         Although there is no prohibition against client code using these
         functions directly, there is little likelihood of that being useful.
 
-      NOTE:  These modules use the Exception module for error handling.
-      When an error occurs during the execution of a method (including a
-      constructor), the method creates a new Exception object of the
-      appropriate type and then passes it to "die".  When you call a
-      constructor or method documented to throw an exception, do so within
-      an "eval" statement and then query $EVAL_ERROR ($@) to "catch" any
-      exceptions that occurred.  For more information, see the documentation
-      for Exception.pm.  (Exception.pm is included with the distribution at
-      the top level of the "lib" directory.)
+        Text::BSV::Exception - Defines a package for creating a
+        Text::BSV::Exception object, which can be thrown using the Perl
+        "die" function and caught using "eval".
 
     For information on the BSV (Bar-Separated Values) format itself, see the
     file named "bsv_format.txt".
 
 REQUIREMENTS
 
-    These modules require Perl 5, version 5.10.1 or later, and the Exception
-    module included with the distribution at the top level of the "lib"
-    directory.
+    These modules require Perl 5, version 5.10.1 or later.
 
 INSTALLATION
 
     To install the modules included in this distribution, simply copy the
-    contents of the "lib" directory (the file "Exception.pm" plus the "Text"
-    directory with its BSV subdirectory and the files therein) to a location
-    in @INC (for example, "/etc/perl" or "C:\Perl\site\lib").
+    "Text" directory (with its BSV subdirectory and the files therein) to a
+    location in @INC (for example, "/etc/perl" or "C:\Perl\site\lib").
 
 AUTHOR
 

@@ -22,11 +22,11 @@ use Hash::Util ("lock_keys");
 use List::Util ("first", "max", "min", "sum");
 use Scalar::Util ("looks_like_number");
 
-use Exception;
 use Text::BSV::BsvParsing;
+use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # Constants:
 my $POUND     = "#";
@@ -49,7 +49,7 @@ sub new {
     unless (defined($bsv_file_path) && -f $bsv_file_path) {
         my $file_path = $bsv_file_path // "(undefined)";
 
-        die Exception->new($Exception::FILE_NOT_FOUND,
+        die Text::BSV::Exception->new($Text::BSV::Exception::FILE_NOT_FOUND,
           "$DQ$file_path$DQ is not a valid file path.");
     } # end unless
 
@@ -62,7 +62,7 @@ sub new {
 
     # Open the file:
     unless (open $bsv_file_reader{"_FILE"}, "<:utf8", $bsv_file_path) {
-        die Exception->new($Exception::IO_ERROR,
+        die Text::BSV::Exception->new($Text::BSV::Exception::IO_ERROR,
           "Couldn't open $DQ$bsv_file_path$DQ for reading.");
     } # end unless
 
@@ -76,7 +76,8 @@ sub new {
     }
     else {
         close $FYLE;
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "Couldn't find a header row in the specified BSV file.");
     } # end unless
 
@@ -87,7 +88,8 @@ sub new {
     }
     else {
         close $FYLE;
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "Couldn't find any records in the specified BSV file.");
     } # end unless
 
@@ -117,7 +119,8 @@ sub get_record {
     my $record;
 
     unless ($bsv_file_reader->has_next()) {
-        die Exception->new($Exception::UNSUPPORTED_OPERATION,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::UNSUPPORTED_OPERATION,
           "There is no next record.");
     } # end unless
 
@@ -159,7 +162,7 @@ into an array of field names plus one hash encapsulating each record.
 =head1 SYNOPSIS
 
   use Text::BSV::BsvFileReader;
-  use Exception;
+  use Text::BSV::Exception;
 
   # Constants:
   my $DQ = "\"";
@@ -176,15 +179,15 @@ into an array of field names plus one hash encapsulating each record.
       my $exception = $EVAL_ERROR;
 
       given ($exception->get_type()) {
-          when ($Exception::FILE_NOT_FOUND) {
+          when ($Text::BSV::Exception::FILE_NOT_FOUND) {
               say STDERR "$DQ$bsv_file_path$DQ is not a valid file path.";
               exit(1);
           }
-          when ($Exception::IO_ERROR) {
+          when ($Text::BSV::Exception::IO_ERROR) {
               say STDERR "Couldn't open $DQ$bsv_file_path$DQ for reading.";
               exit(1);
           }
-          when ($Exception::INVALID_DATA_FORMAT) {
+          when ($Text::BSV::Exception::INVALID_DATA_FORMAT) {
               say STDERR "Invalid BSV data:  " . $exception->get_message();
               exit(1);
           }
@@ -233,20 +236,19 @@ The constructor returns a reference to a Text::BSV::BsvFileReader object,
 which is implemented internally as a hash.  All functionality is exposed
 through methods.
 
-  NOTE:  This module uses the Exception module for error handling.  When an
-  error occurs during the execution of a method (including the constructor),
-  the method creates a new Exception object of the appropriate type and then
-  passes it to "die".  When you call the constructor or a method documented
-  to throw an exception, do so within an "eval" statement and then query
-  $EVAL_ERROR ($@) to catch any exceptions that occurred.  For more
-  information, see the documentation for Exception.pm (included with the
-  distribution at the top level of the lib directory).
+  NOTE:  This module uses the Text::BSV::Exception module for error
+  handling.  When an error occurs during the execution of a method
+  (including the constructor), the method creates a new
+  Text::BSV::Exception object of the appropriate type and then passes
+  it to "die".  When you call the constructor or a method documented
+  to throw an exception, do so within an "eval" statement and then
+  query $EVAL_ERROR ($@) to catch any exceptions that occurred.  For
+  more information, see the documentation for Text::BSV::Exception.
 
 =head1 PREREQUISITES
 
-This module requires Perl 5, version 5.10.1 or later, and the Exception
-module (which is included with the distribution at the top level of the
-F<lib> directory).
+This module requires Perl 5 (version 5.10.1 or later), the
+Text::BSV::BsvParsing module, and the Text::BSV::Exception module.
 
 =head1 METHODS
 
@@ -255,11 +257,12 @@ F<lib> directory).
 =item Text::BSV::BsvFileReader->new($bsv_file_path);
 
 This is the constructor.  If the specified file does not exist, the
-constructor throws an exception of type $Exception::FILE_NOT_FOUND.
-If the file cannot be opened for reading, the constructor throws an
-exception of type $Exception::IO_ERROR.  If the header row or the
-first non-header row in the BSV data is not valid, the constructor
-throws an exception of type $Exception::INVALID_DATA_FORMAT.
+constructor throws an exception of type
+$Text::BSV::Exception::FILE_NOT_FOUND.  If the file cannot be opened
+for reading, the constructor throws an exception of type
+$Text::BSV::Exception::IO_ERROR.  If the header row or the first
+non-header row in the BSV data is not valid, the constructor throws
+an exception of type $Text::BSV::Exception::INVALID_DATA_FORMAT.
 
 =item $bsv_file_reader->get_field_names();
 
@@ -278,9 +281,9 @@ are the field names, and the values are the field values for the
 record encapsulated by the hash.
 
 If there is no next record, this method throws an exception of type
-$Exception::UNSUPPORTED_OPERATION.  If the BSV data in the next record
-is not valid, this method throws an exception of type
-$Exception::INVALID_DATA_FORMAT.
+$Text::BSV::Exception::UNSUPPORTED_OPERATION.  If the BSV data in the
+next record is not valid, this method throws an exception of type
+$Text::BSV::Exception::INVALID_DATA_FORMAT.
 
 =item $bsv_file_reader->close();
 

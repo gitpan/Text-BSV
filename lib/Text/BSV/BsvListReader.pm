@@ -23,11 +23,11 @@ use Hash::Util ("lock_keys");
 use List::Util ("first", "max", "min", "sum");
 use Scalar::Util ("looks_like_number");
 
-use Exception;
 use Text::BSV::BsvParsing;
+use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 # Constants:
 my $POUND     = "#";
@@ -48,7 +48,8 @@ sub new {
 
     # Make sure that there is at least a header row and one other row:
     unless (scalar(@{ $bsv_rows }) >= 2) {
-        die Exception->new($Exception::INVALID_DATA_FORMAT,
+        die Text::BSV::Exception->new(
+          $Text::BSV::Exception::INVALID_DATA_FORMAT,
           "BSV data must have at least a header row plus one record.");
     } # end unless
 
@@ -102,7 +103,7 @@ each record.
 =head1 SYNOPSIS
 
   use Text::BSV::BsvListReader;
-  use Exception;
+  use Text::BSV::Exception;
 
   # Create a Text::BSV::BsvListReader instance:
   my $bsv_rows = $ARGV[0];
@@ -144,20 +145,19 @@ The constructor returns a reference to a Text::BSV::BsvListReader object,
 which is implemented internally as a hash.  All functionality is exposed
 through methods.
 
-  NOTE:  This module uses the Exception module for error handling.  When an
-  error occurs during the execution of a method (including the constructor),
-  the method creates a new Exception object of the appropriate type and then
-  passes it to "die".  When you call the constructor or a method documented
-  to throw an exception, do so within an "eval" statement and then query
-  $EVAL_ERROR ($@) to catch any exceptions that occurred.  For more
-  information, see the documentation for Exception.pm (included with the
-  distribution at the top level of the lib directory).
+  NOTE:  This module uses the Text::BSV::Exception module for error
+  handling.  When an error occurs during the execution of a method
+  (including the constructor), the method creates a new
+  Text::BSV::Exception object of the appropriate type and then passes
+  it to "die".  When you call the constructor or a method documented
+  to throw an exception, do so within an "eval" statement and then
+  query $EVAL_ERROR ($@) to catch any exceptions that occurred.  For
+  more information, see the documentation for Text::BSV::Exception.
 
 =head1 PREREQUISITES
 
-This module requires Perl 5, version 5.10.1 or later, and the Exception
-module (which is included with the distribution at the top level of the
-F<lib> directory).
+This module requires Perl 5 (version 5.10.1 or later), the
+Text::BSV::BsvParsing module, and the Text::BSV::Exception module.
 
 =head1 METHODS
 
@@ -167,7 +167,7 @@ F<lib> directory).
 
 This is the constructor.  If the header row or the first record in the
 BSV data is not valid, the constructor throws an exception of type
-$Exception::INVALID_DATA_FORMAT.
+$Text::BSV::Exception::INVALID_DATA_FORMAT.
 
 =item $bsv_list_reader->get_field_names();
 
