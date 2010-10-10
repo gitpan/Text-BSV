@@ -42,7 +42,7 @@ use List::Util ("first", "max", "min", "sum");
 use Scalar::Util ("looks_like_number");
 
 # Version:
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # Exception types:
 our $DIRECTORY_NOT_FOUND   = 0;

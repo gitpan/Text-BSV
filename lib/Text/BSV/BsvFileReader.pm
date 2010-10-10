@@ -26,7 +26,7 @@ use Text::BSV::BsvParsing;
 use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # Constants:
 my $POUND     = "#";
@@ -193,6 +193,7 @@ into an array of field names plus one hash encapsulating each record.
           }
           default {
               say STDERR $exception->get_message();
+              exit(1);
           } # end when
       } # end given
   } # end if
