@@ -26,7 +26,7 @@ use Text::BSV::BsvParsing;
 use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 # Constants:
 my $POUND     = "#";
@@ -66,13 +66,15 @@ sub new {
           "Couldn't open $DQ$bsv_file_path$DQ for reading.");
     } # end unless
 
-    # Get the header row and the first non-header row:
+    # Get the header row and the first non-header row, and strip their
+    # end-of-line characters:
     my $FYLE = $bsv_file_reader{"_FILE"};
 
     $header_row = <$FYLE>;
 
     if (defined $header_row) {
         chomp $header_row;
+        $header_row =~ s/\r//gs;
     }
     else {
         close $FYLE;
@@ -85,6 +87,7 @@ sub new {
 
     if (defined $bsv_file_reader{"_current_record"}) {
         chomp $bsv_file_reader{"_current_record"};
+        $bsv_file_reader{"_current_record"} =~ s/\r//gs;
     }
     else {
         close $FYLE;
@@ -137,6 +140,7 @@ sub get_record {
 
     if (defined $bsv_file_reader->{"_current_record"}) {
         chomp $bsv_file_reader->{"_current_record"};
+        $bsv_file_reader->{"_current_record"} =~ s/\r//gs;
     }
     else {
         $bsv_file_reader->close();

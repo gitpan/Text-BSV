@@ -6,20 +6,16 @@ Bar-Separated Values (BSV) format is a delimited-text format with
 the following simple and precise rules:
 
  *  The character encoding must be either UTF-8 or lower-ASCII (which
-    is a perfect subset of UTF-8).
+    is a subset of UTF-8).
 
- *  A line-break sequence comprising a newline character (plus an
-    optional preceding carriage-return character) terminates a row and
+ *  A line-break sequence comprising a newline character plus an
+    optional preceding carriage-return character terminates a row and
     is not part of the last field name or value in that row.  A BSV
     writer must provide a final newline character (plus an optional
     preceding carriage-return character) at the end of the last row.
     A BSV reader may respond to the lack of a final newline character
     by generating a warning but must otherwise process the last row as
     if it were properly terminated.
-
-      NOTE:  A BSV reader may accept a lone carriage-return character
-      (with no following newline character) as a row terminator
-      without complaining.
 
  *  The first row in a BSV file or data set (collection of rows) must
     contain field names (column headings).  Every record (the rows
@@ -39,11 +35,6 @@ the following simple and precise rules:
     occurrence of a backslash in data where the vertical bar is the
     field delimiter is an error, and a BSV reader must abort
     processing upon encountering such an error.
-
-      NOTE:  When translating field names and values into BSV format,
-      a BSV writer must strip carriage returns and then escape
-      backslashes, vertical bars, and newline characters by preceding
-      each with a backslash.
 
  *  The vertical bar (|) is the default field delimiter; however, a
     BSV reader must also correctly parse simple comma-separated,
@@ -70,14 +61,14 @@ the following simple and precise rules:
     parse the data in "simple" mode, without recognizing any
     character-escape mechanisms (such as "\n").
 
-    Note that "BSV" could be said to stand for "bar-separated or
-    simple comma-, semicolon-, or tab-separated values".
+      NOTE:  "BSV" can be said to stand for "Bar-Separated or simple
+      comma-, semicolon-, or tab-separated Values".
 
- *  A BSV reader must not trim or normalize whitespace.  (Of course,
+ *  A BSV reader must not trim or "normalize" whitespace.  (Of course,
     a client application may do so after receiving the parsed data
     from the reader.)
 
  *  When not in "simple" mode (that is, when the field delimiter is
     the vertical bar), a BSV reader must translate backslash-escape
-    sequences when reporting or storing a parsed BSV-format field name
-    or value.
+    sequences into the corresponding literal text when returning or
+    storing a parsed BSV-format field name or value.

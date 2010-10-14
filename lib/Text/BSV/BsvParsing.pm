@@ -28,7 +28,7 @@ use Exporter;
 use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 # Specify default exports:
 our @ISA = ("Exporter");

@@ -201,6 +201,7 @@ for my $file_path (
 
         for my $line (@lines) {
             chomp $line;
+            $line =~ s/\r//gs;
         } # next $line
 
         close $BSV_FILE;

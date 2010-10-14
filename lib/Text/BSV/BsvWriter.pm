@@ -28,7 +28,7 @@ use Text::BSV::BsvParsing;
 use Text::BSV::Exception;
 
 # Version:
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 # Constants:
 my $POUND     = "#";
